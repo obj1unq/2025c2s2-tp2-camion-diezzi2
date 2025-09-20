@@ -1,0 +1,101 @@
+import cosas.*
+import camion.*
+
+describe "" {
+  test "Prueba de carga y descarga" {
+    camion.cargar(bumblebee)
+
+    assert.equals(#{bumblebee}, camion.cosas())
+
+    camion.cargar(knightRider)
+
+    assert.equals(#{bumblebee, knightRider}, camion.cosas())
+
+    camion.descargar(bumblebee)
+
+    assert.equals(#{knightRider}, camion.cosas())
+
+    assert.throwsException({ camion.cargar(knightRider) })
+
+    assert.throwsException({ camion.descargar(bumblebee) })
+  }
+
+  test "Comprobación de peso de cargas par e impar" {
+    camion.cargar(bumblebee)
+    arenaAGranel.peso(50)
+    camion.cargar(arenaAGranel)
+    
+    assert.that(camion.todoPesoEsPar())
+
+    arenaAGranel.peso(51)
+
+    assert.notThat(camion.todoPesoEsPar())
+  }
+
+  test "Comprobación de peso de cargas" {
+    camion.cargar(bumblebee)
+    arenaAGranel.peso(50)
+    camion.cargar(arenaAGranel)
+
+    assert.that(camion.hayAlgoDePeso(50))
+    assert.that(camion.hayAlgoDePeso(800))
+    assert.notThat(camion.hayAlgoDePeso(500))
+  }
+
+  test "Prueba de peso total y exceso de peso de camión" {
+    camion.cargar(bumblebee)
+    paqueteDeLadrillos.cantidadDeLadrillos(300)
+    camion.cargar(paqueteDeLadrillos)
+
+    assert.equals(2400, camion.pesoTotal())
+    assert.notThat(camion.estaExcedidoDePeso())
+
+    paqueteDeLadrillos.cantidadDeLadrillos(400)
+
+    assert.equals(2600, camion.pesoTotal())
+    assert.that(camion.estaExcedidoDePeso())
+  }
+
+  test "Prueba de consultas de cargas por nivel de peligrosidad" {
+    camion.cargar(bumblebee)
+    bumblebee.estaEnModoRobot(false)
+    camion.cargar(bateriaAntiaerea)
+    bateriaAntiaerea.tieneMisiles(false)
+    camion.cargar(residuosRadiactivos)
+
+    assert.equals(bateriaAntiaerea, camion.cargaConNivelDePeligrosidad(0))
+    assert.equals(bumblebee, camion.cargaConNivelDePeligrosidad(15))
+    assert.equals(residuosRadiactivos, camion.cargaConNivelDePeligrosidad(200))
+    assert.throwsException({camion.cargaConNivelDePeligrosidad(30)})
+  }
+
+  test "Prueba de consultas de cargas que superen cierta peligrosidad" {
+    camion.cargar(knightRider)
+    bateriaAntiaerea.tieneMisiles(true)
+    camion.cargar(bateriaAntiaerea)
+
+    assert.equals(#{bateriaAntiaerea}, camion.cargasConNivelPeligrosidadSuperiorA(15))
+    assert.equals(#{bateriaAntiaerea}, camion.cargasMasPeligrosasQue(bumblebee))
+    assert.equals(#{knightRider, bateriaAntiaerea}, camion.cargasConNivelPeligrosidadSuperiorA(2))
+    assert.equals(#{knightRider, bateriaAntiaerea}, camion.cargasMasPeligrosasQue(paqueteDeLadrillos))
+    assert.equals(#{}, camion.cargasConNivelPeligrosidadSuperiorA(200))
+    assert.equals(#{}, camion.cargasMasPeligrosasQue(residuosRadiactivos))
+  }
+
+  test "Prueba de consultas por la habilitación del camión para circular en rutas" {
+    bumblebee.estaEnModoRobot(true)
+    camion.cargar(bumblebee)
+    paqueteDeLadrillos.cantidadDeLadrillos(300)
+    camion.cargar(paqueteDeLadrillos)
+
+    assert.notThat(camion.puedeCircularEnRuta(20))
+
+    bumblebee.estaEnModoRobot(false)
+
+    assert.that(camion.puedeCircularEnRuta(20))
+
+    paqueteDeLadrillos.cantidadDeLadrillos(400)
+
+    assert.notThat(camion.puedeCircularEnRuta(20))
+  }
+}
