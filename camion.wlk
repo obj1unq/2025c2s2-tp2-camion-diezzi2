@@ -1,4 +1,5 @@
 import cosas.*
+import caminosYAlmacen.*
 
 object camion {
 	const property cosas = #{}
@@ -43,8 +44,32 @@ object camion {
 		return self.cargasConNivelPeligrosidadSuperiorA(cargaConsultada.nivelPeligrosidad())
 	}
 
-	method puedeCircularEnRuta(peligrosidadMaxima) {
+	method puedeCircularEnRutaDeNivel(peligrosidadMaxima) {
 		return self.cargasConNivelPeligrosidadSuperiorA(peligrosidadMaxima) == #{} and not(self.estaExcedidoDePeso())
+	}
+
+	method tieneCargaMasPesadaQue_YMasLigeraQue_(pesoMinimo, pesoMaximo) {
+		return cosas.any({cosa => cosa.peso() > pesoMinimo and cosa.peso() < pesoMaximo})
+	}
+
+	method cosaMasPesada() {
+		self.validarConsultaDeCosaMasPesada()
+		return cosas.max({cosa => cosa.peso()})
+	}
+
+	method bultosTransportados() {
+		return cosas.sum({cosa => cosa.bultosUsados()})
+	}
+
+	method sufrirUnAccidente() {
+		cosas.forEach({cosa => cosa.registrarEfectoDeAccidente()})
+	}
+
+	method transportar(destino, camino) {
+		if (camino.soportaElViaje(self)) {
+			cosas.forEach({cosa => destino.almacenar(cosa)})
+			cosas.clear()
+		}
 	}
 
 	// validadores
@@ -64,6 +89,12 @@ object camion {
 	method validarConsultaDePeligrosidad(nivelPeligrosidadConsultado) {
 		if (not(cosas.any({cosa => cosa.nivelPeligrosidad() == nivelPeligrosidadConsultado}))) {
 			self.error("No existe una cosa en el camión con el nivel de peligrosidad consultado")
+		}
+	}
+
+	method validarConsultaDeCosaMasPesada() {
+		if (cosas.isEmpty()) {
+			self.error("No se puede determinar la cosa más pesada en el camión ya que no hay nada en el mismo")
 		}
 	}
 }
