@@ -37,17 +37,13 @@ object arenaAGranel {
 }
 
 object bumblebee {
-	const peso                  = 800
-	const nivelPeligrosidadBase = 15
-	var estaEnModoRobot         = true
-	const bultosUsados          = 2
+	const peso                   = 800
+	const nivelPeligrosidadBase  = 15
+	var property estaEnModoRobot = true
+	const bultosUsados           = 2
 
 	method bultosUsados() {
 		return bultosUsados
-	}
-
-	method estaEnModoRobot(_estaEnModoRobot) {
-		estaEnModoRobot = _estaEnModoRobot
 	}
 
 	method peso() {
@@ -67,16 +63,15 @@ object bumblebee {
 }
 
 object paqueteDeLadrillos {
-	const pesoPorLadrillo   = 2
-	var cantidadDeLadrillos = 50
-	const nivelPeligrosidad = 2
+	const pesoPorLadrillo            = 2
+	var property cantidadDeLadrillos = 50
+	const nivelPeligrosidad          = 2
 
 	method bultosUsados() {
-		return 3.min((cantidadDeLadrillos / 100).roundUp(0))
-	}
-
-	method cantidadDeLadrillos(_cantidadDeLadrillos) {
-		cantidadDeLadrillos = _cantidadDeLadrillos
+		return if (cantidadDeLadrillos <= 300) {
+			2.min((cantidadDeLadrillos / 100).roundUp(0))
+		}
+		else 3
 	}
 
 	method peso() {
@@ -93,18 +88,14 @@ object paqueteDeLadrillos {
 }
 
 object bateriaAntiaerea {
-	const pesoBase   = 200
-	var tieneMisiles = true
+	const pesoBase            = 200
+	var property tieneMisiles = true
 
 	method bultosUsados() {
 		return if (tieneMisiles) {
 			2
 		}
 		else 1
-	}
-
-	method tieneMisiles(_tieneMisiles) {
-		tieneMisiles = _tieneMisiles
 	}
 
 	method peso() {

@@ -11,6 +11,10 @@ object ruta9 {
 object caminosVecinales {
     var pesoMaximoPermitido = 700
 
+    method pesoMaximoPermitido(_pesoMaximoPermitido) {
+      pesoMaximoPermitido = _pesoMaximoPermitido
+    }
+
     method soportaElViaje(vehiculo) {
         return vehiculo.pesoTotal() <= pesoMaximoPermitido
     }
@@ -19,7 +23,7 @@ object caminosVecinales {
 // ALMACEN
 
 object almacen {
-    var cosas = #{}
+    const property cosas = #{}
 
     method almacenar(unaCosa) {
         self.validarAlmacenamiento(unaCosa)
